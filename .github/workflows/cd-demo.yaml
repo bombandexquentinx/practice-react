@@ -12,11 +12,20 @@ jobs:
     runs-on: ubuntu-latest
     environment: demo
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-      - run: npm ci && npm run build --if-present
+
+      - name: Sanity build
+        run: |
+          npm ci
+          npm run build --if-present
+
       - name: Trigger Plesk auto-deploy (Demo)
-        run: curl -X POST "$PLESK_GIT_WEBHOOK_URL" -H "X-Git-Event: push"
+        run: |
+          curl -X POST "$PLESK_GIT_WEBHOOK_URL" -H "X-Git-Event: push"
